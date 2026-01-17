@@ -1,3 +1,4 @@
+from django.views.generic.detail import DetailView
 from django.http import HttpResponse
 from django.shortcuts import render
 from .models import Book
