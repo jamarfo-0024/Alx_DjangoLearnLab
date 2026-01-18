@@ -1,5 +1,10 @@
 from django.db import models
+from django.contrib.auth.models import User
 
+
+# -------------------------------
+# AUTHOR MODEL
+# -------------------------------
 class Author(models.Model):
     name = models.CharField(max_length=100)
 
@@ -7,14 +12,27 @@ class Author(models.Model):
         return self.name
 
 
+# -------------------------------
+# BOOK MODEL (WITH CUSTOM PERMISSIONS)
+# -------------------------------
 class Book(models.Model):
     title = models.CharField(max_length=100)
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
+
+    class Meta:
+        permissions = [
+            ('can_add_book', 'Can add book'),
+            ('can_change_book', 'Can change book'),
+            ('can_delete_book', 'Can delete book'),
+        ]
 
     def __str__(self):
         return self.title
 
 
+# -------------------------------
+# LIBRARY MODEL (MISSING BEFORE)
+# -------------------------------
 class Library(models.Model):
     name = models.CharField(max_length=100)
     books = models.ManyToManyField(Book)
@@ -23,17 +41,20 @@ class Library(models.Model):
         return self.name
 
 
+# -------------------------------
+# LIBRARIAN MODEL (LINKED TO LIBRARY)
+# -------------------------------
 class Librarian(models.Model):
     name = models.CharField(max_length=100)
-    library = models.OneToOneField(Library, on_delete=models.CASCADE)
+    library = models.OneToOneField('Library', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
 
 
-from django.db import models
-from django.contrib.auth.models import User
-
+# -------------------------------
+# USER PROFILE (ROLE-BASED)
+# -------------------------------
 class UserProfile(models.Model):
     ROLE_CHOICES = [
         ('Admin', 'Admin'),
@@ -48,6 +69,9 @@ class UserProfile(models.Model):
         return f"{self.user.username} - {self.role}"
 
 
+# -------------------------------
+# AUTO-CREATE USER PROFILE SIGNALS
+# -------------------------------
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -59,5 +83,3 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.userprofile.save()
-
-# Create your models here.
