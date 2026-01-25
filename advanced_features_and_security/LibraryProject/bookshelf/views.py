@@ -1,17 +1,18 @@
 from django.shortcuts import render
-from django.contrib.auth.decorators import permission_required
 from .models import Book
-from .forms import SearchForm
+from .forms import ExampleForm
 
-@permission_required('bookshelf.can_view', raise_exception=True)
 def book_list(request):
     books = Book.objects.all()
+    return render(request, 'bookshelf/book_list.html', {'books': books})
 
-    if request.GET.get('q'):
-        form = SearchForm(request.GET)
+def form_example(request):
+    if request.method == 'POST':
+        form = ExampleForm(request.POST)
         if form.is_valid():
-            books = books.filter(title__icontains=form.cleaned_data['q'])
+            # safe saving using Django ORM → prevents SQL injection
+            form.save()
     else:
-        form = SearchForm()
+        form = ExampleForm()
 
-    return render(request, 'bookshelf/book_list.html', {'books': books, 'form': form})
+    return render(request, 'bookshelf/form_example.html', {'form': form})
