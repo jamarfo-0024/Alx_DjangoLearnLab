@@ -169,3 +169,6 @@ SECURE_BROWSER_XSS_FILTER = True
 
 # Protect against clickjacking
 X_FRAME_OPTIONS = 'DENY'
+
+# Honor X-Forwarded-Proto header set by reverse proxies
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
