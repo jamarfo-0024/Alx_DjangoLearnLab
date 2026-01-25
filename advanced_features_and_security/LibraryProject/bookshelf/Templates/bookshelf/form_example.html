@@ -1,17 +1,18 @@
+<!-- form_example.html -->
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Secure Form Example</title>
+    <title>Example Form</title>
 </head>
 <body>
-    <h1>Secure Form Example</h1>
 
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit</button>
-    </form>
+<h1>Submit Example Form</h1>
 
-    <p>Note: This form uses CSRF protection and cleans input to prevent XSS attacks.</p>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+</form>
+
 </body>
 </html>
