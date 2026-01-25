@@ -23,9 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-l-u6%@n7a7!_^-ixt_9pfy^u=g%ivz6rq^*!=th7pu1=@t))fr'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -45,8 +46,6 @@ INSTALLED_APPS = [
 AUTH_USER_MODEL = 'bookshelf.CustomUser'
 
 
-
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -55,6 +54,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'LibraryProject.security_middleware.ContentSecurityPolicyMiddleware',
+
+    # Content Security Policy (Protects against XSS)
+    'csp.middleware.CSPMiddleware',
+]
+
 ]
 
 ROOT_URLCONF = 'LibraryProject.urls'
@@ -86,6 +91,15 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+SECURE_SSL_REDIRECT = True
 
 
 # Password validation
