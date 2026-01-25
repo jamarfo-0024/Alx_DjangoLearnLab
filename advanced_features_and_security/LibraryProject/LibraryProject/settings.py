@@ -140,3 +140,32 @@ STATIC_URL = 'static/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# -------------------------------
+# HTTPS & Security Settings
+# -------------------------------
+
+# Redirect all HTTP requests to HTTPS
+SECURE_SSL_REDIRECT = True
+
+# Tell browsers to only use HTTPS for 1 year
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+
+# Extend HSTS to all subdomains
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+# Enable HSTS preload (used by Chrome preload list)
+SECURE_HSTS_PRELOAD = True
+
+# Ensure cookies only sent over HTTPS
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# Prevent browser from MIME-sniffing content
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Enable browser XSS protection
+SECURE_BROWSER_XSS_FILTER = True
+
+# Protect against clickjacking
+X_FRAME_OPTIONS = 'DENY'
