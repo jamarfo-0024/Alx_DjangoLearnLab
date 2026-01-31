@@ -23,9 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-l-u6%@n7a7!_^-ixt_9pfy^u=g%ivz6rq^*!=th7pu1=@t))fr'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -56,7 +57,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'LibraryProject.security_middleware.ContentSecurityPolicyMiddleware',
+
+    # Content Security Policy (Protects against XSS)
+    'csp.middleware.CSPMiddleware',
 ]
+
 
 ROOT_URLCONF = 'LibraryProject.urls'
 
@@ -87,6 +93,15 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+SECURE_SSL_REDIRECT = True
 
 
 # Password validation
@@ -127,3 +142,35 @@ STATIC_URL = 'static/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# -------------------------------
+# HTTPS & Security Settings
+# -------------------------------
+
+# Redirect all HTTP requests to HTTPS
+SECURE_SSL_REDIRECT = True
+
+# Tell browsers to only use HTTPS for 1 year
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+
+# Extend HSTS to all subdomains
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+# Enable HSTS preload (used by Chrome preload list)
+SECURE_HSTS_PRELOAD = True
+
+# Ensure cookies only sent over HTTPS
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# Prevent browser from MIME-sniffing content
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Enable browser XSS protection
+SECURE_BROWSER_XSS_FILTER = True
+
+# Protect against clickjacking
+X_FRAME_OPTIONS = 'DENY'
+
+# Honor X-Forwarded-Proto header set by reverse proxies
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
