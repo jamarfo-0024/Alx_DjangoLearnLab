@@ -3,9 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.db.models import Q
 
-from .models import Post, Comment
-from .forms import RegisterForm, CommentForm
+from .models import Post, Comment, Tag
+from .forms import RegisterForm, CommentForm, PostForm
 
 
 # ==========================
@@ -41,6 +42,7 @@ class PostListView(ListView):
     model = Post
     template_name = 'blog/post_list.html'
     context_object_name = 'posts'
+    ordering = ['-published_date']   # senior improvement
 
 
 class PostDetailView(DetailView):
@@ -55,7 +57,7 @@ class PostDetailView(DetailView):
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
-    fields = ['title', 'content']
+    form_class = PostForm
     template_name = 'blog/post_form.html'
 
     def form_valid(self, form):
@@ -65,7 +67,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
-    fields = ['title', 'content']
+    form_class = PostForm
     template_name = 'blog/post_form.html'
 
     def form_valid(self, form):
@@ -88,7 +90,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 # ==========================
-# COMMENT CRUD 
+# COMMENT CRUD VIEWS
 # ==========================
 
 class CommentCreateView(LoginRequiredMixin, CreateView):
@@ -128,3 +130,38 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
+
+
+# ==========================
+# TAG FILTERING VIEW
+# ==========================
+
+def posts_by_tag(request, tag_name):
+    tag = get_object_or_404(Tag, name=tag_name)
+    posts = tag.post_set.all()
+
+    return render(request, 'blog/post_list.html', {
+        'posts': posts,
+        'selected_tag': tag
+    })
+
+
+# ==========================
+# SEARCH FUNCTIONALITY
+# ==========================
+
+def search_posts(request):
+    query = request.GET.get('q')
+    posts = Post.objects.all()
+
+    if query:
+        posts = Post.objects.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct()
+
+    return render(request, 'blog/search_results.html', {
+        'posts': posts,
+        'query': query
+    })

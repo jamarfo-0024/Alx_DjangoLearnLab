@@ -27,3 +27,14 @@
     <button type="submit">Add Comment</button>
 </form>
 {% endif %}
+
+<h4>Tags:</h4>
+
+{% for tag in object.tags.all %}
+    <a href="{% url 'posts-by-tag' tag.name %}">{{ tag.name }}</a>
+{% endfor %}
+
+<form method="GET" action="{% url 'post-search' %}">
+    <input type="text" name="q" placeholder="Search posts">
+    <button type="submit">Search</button>
+</form>

@@ -3,17 +3,39 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 
 
+# ==========================
+# TAG MODEL
+# ==========================
+
+class Tag(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+# ==========================
+# POST MODEL
+# ==========================
+
 class Post(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
     published_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    tags = models.ManyToManyField(Tag, blank=True)
+
     def get_absolute_url(self):
         return reverse('post-detail', kwargs={'pk': self.pk})
 
     def __str__(self):
         return self.title
+
+
+# ==========================
+# COMMENT MODEL
+# ==========================
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
