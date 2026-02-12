@@ -10,6 +10,8 @@ from .views import (
 )
 
 from django.contrib.auth import views as auth_views
+from .views import add_comment, update_comment, delete_comment
+
 
 
 urlpatterns = [
@@ -40,4 +42,12 @@ urlpatterns = [
     path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),
 
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
+
+    path('post/<int:pk>/comments/new/', add_comment, name='comment-add'),
+
+    path('comment/<int:pk>/update/', update_comment, name='comment-update'),
+
+    path('comment/<int:pk>/delete/', delete_comment, name='comment-delete'),
+
 ]
+
