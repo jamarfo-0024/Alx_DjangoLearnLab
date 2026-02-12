@@ -1,24 +1,29 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views
+
 from .views import (
+    # Authentication
+    register,
+    profile,
+
+    # Post CRUD
     PostListView,
     PostDetailView,
     PostCreateView,
     PostUpdateView,
     PostDeleteView,
-    register,
-    profile
+
+    # Comment CRUD 
+    CommentCreateView,
+    CommentUpdateView,
+    CommentDeleteView,
 )
-
-from django.contrib.auth import views as auth_views
-from .views import add_comment, update_comment, delete_comment
-
-
 
 urlpatterns = [
 
-    # -------------------------
-    # Authentication URLs
-    # -------------------------
+    # =========================
+    # AUTHENTICATION URLS
+    # =========================
 
     path('login/', auth_views.LoginView.as_view(template_name='blog/login.html'), name='login'),
 
@@ -29,9 +34,9 @@ urlpatterns = [
     path('profile/', profile, name='profile'),
 
 
-    # -------------------------
-    # Blog CRUD URLs 
-    # -------------------------
+    # =========================
+    # POST CRUD URLS
+    # =========================
 
     path('post/', PostListView.as_view(), name='post-list'),
 
@@ -43,11 +48,14 @@ urlpatterns = [
 
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
 
-    path('post/<int:pk>/comments/new/', add_comment, name='comment-add'),
 
-    path('comment/<int:pk>/update/', update_comment, name='comment-update'),
+    # =========================
+    # COMMENT CRUD URLS
+    # =========================
 
-    path('comment/<int:pk>/delete/', delete_comment, name='comment-delete'),
+    path('post/<int:pk>/comments/new/', CommentCreateView.as_view(), name='comment-create'),
 
+    path('comment/<int:pk>/update/', CommentUpdateView.as_view(), name='comment-update'),
+
+    path('comment/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment-delete'),
 ]
-
