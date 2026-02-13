@@ -45,6 +45,16 @@ class PostListView(ListView):
     ordering = ['-published_date']
 
 
+class PostByTagListView(ListView):
+    model = Post
+    template_name = 'blog/post_list.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        tag_slug = self.kwargs.get('tag_slug')
+        return Post.objects.filter(tags__slug=tag_slug)
+
+
 class PostDetailView(DetailView):
     model = Post
     template_name = 'blog/post_detail.html'
@@ -130,19 +140,6 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
-
-
-# ==========================
-# TAG FILTERING VIEW
-# ==========================
-
-def posts_by_tag(request, tag_name):
-    posts = Post.objects.filter(tags__name=tag_name)
-
-    return render(request, 'blog/post_list.html', {
-        'posts': posts,
-        'selected_tag': tag_name
-    })
 
 
 # ==========================
