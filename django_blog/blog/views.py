@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
 
-from .models import Post, Comment, Tag
+from .models import Post, Comment
 from .forms import RegisterForm, CommentForm, PostForm
 
 
@@ -42,7 +42,7 @@ class PostListView(ListView):
     model = Post
     template_name = 'blog/post_list.html'
     context_object_name = 'posts'
-    ordering = ['-published_date']   # senior improvement
+    ordering = ['-published_date']
 
 
 class PostDetailView(DetailView):
@@ -137,12 +137,11 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 # ==========================
 
 def posts_by_tag(request, tag_name):
-    tag = get_object_or_404(Tag, name=tag_name)
-    posts = tag.post_set.all()
+    posts = Post.objects.filter(tags__name=tag_name)
 
     return render(request, 'blog/post_list.html', {
         'posts': posts,
-        'selected_tag': tag
+        'selected_tag': tag_name
     })
 
 
