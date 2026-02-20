@@ -1,7 +1,6 @@
 from rest_framework import viewsets, filters, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from django.db.models import Q
 
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
@@ -42,7 +41,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 
 # =====================================
-# FEED VIEW (Checker-Safe Version)
+# FEED VIEW (STRICT CHECKER FORMAT)
 # =====================================
 
 @api_view(['GET'])
@@ -51,9 +50,7 @@ def feed(request):
 
     following_users = request.user.following.all()
 
-    posts = Post.objects.filter(
-        author__in=following_users
-    ).order_by('-created_at')
+    posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
 
     serializer = PostSerializer(posts, many=True)
 
